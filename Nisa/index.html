@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Happy Birthday!</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+  <style>
+    .floating { animation: floating 3s ease-in-out infinite; }
+    @keyframes floating { 0%{transform:translateY(0)}50%{transform:translateY(-15px)}100%{transform:translateY(0)} }
+
+    .flip-card { perspective: 1000px; width: 18rem; height: 18rem; }
+    .flip-card-inner { position: relative; width: 100%; height: 100%; transition: transform 0.8s; transform-style: preserve-3d; }
+    .flip-card.flipped .flip-card-inner { transform: rotateY(180deg); }
+    .flip-card-front, .flip-card-back {
+      position: absolute; inset: 0; backface-visibility: hidden;
+      border-radius: 1rem; display: flex; flex-direction: column;
+      justify-content: center; align-items: center;
+      padding: 1rem; box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    .flip-card-back { transform: rotateY(180deg); }
+    .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center; z-index: 1000; }
+    .gift-item { transition: transform .25s; }
+    .gift-item:hover { transform: scale(1.04); }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-pink-100 to-purple-100 min-h-screen font-sans">
+
+  <!-- INTRO -->
+  <section id="intro" class="min-h-screen flex items-center justify-center p-6">
+    <div class="bg-white rounded-2xl shadow-xl p-8 max-w-md w-full text-center floating">
+      <img src="https://i.pinimg.com/originals/8f/1c/4a/8f1c4a69822c6d7a7a734e73248f2730.gif" alt="gif" class="mx-auto mb-4 h-24">
+      <p class="text-lg text-gray-800 mb-6">Hi, <span class="font-semibold">Putri</span>! Klik love dibawah untuk lanjut </p>
+      <button id="introPlay" class="bg-pink-500 hover:bg-pink-600 text-white font-bold py-3 px-10 rounded-full transition transform hover:scale-105 shadow-lg text-xl">❤️</button>
+    </div>
+    <iframe id="ytPlayer" class="hidden" width="0" height="0" src="" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+  </section>
+
+  <!-- Flip Card -->
+  <section id="page2" class="hidden flex flex-col items-center justify-center min-h-screen p-4 text-center">
+    <h2 class="text-3xl font-bold text-purple-800 mb-8">Ciee Tambah Tua wkwkw</h2>
+    <div id="flipCard" class="flip-card mb-6">
+      <div class="flip-card-inner">
+        <div class="flip-card-front bg-gradient-to-br from-pink-200 to-purple-200 flex items-center justify-center">
+          <p id="cardFrontText" class="text-xl font-semibold text-purple-800">Happy Birthday kak, maap yaa cuman bisa kasih ini</p>
+        </div>
+        <div class="flip-card-back bg-gradient-to-br from-purple-200 to-pink-200 flex items-center justify-center overflow-hidden">
+          <img id="cardImage" src="" alt="" class="hidden w-full h-full object-cover rounded-lg">
+          <p id="cardText" class="hidden text-xl font-semibold text-purple-800 p-4"></p>
+        </div>
+      </div>
+    </div>
+    <button id="flipBtn" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-6 rounded-full">Next</button>
+    <button id="giftBtn" class="hidden mt-4 bg-pink-600 hover:bg-pink-700 text-white font-bold py-3 px-6 rounded-full">🎁 Mystery Box</button>
+  </section>
+
+  <!-- Mystery Boxes -->
+  <section id="page3" class="hidden min-h-screen flex flex-col justify-center p-6">
+    <h2 class="text-3xl font-bold text-purple-800 text-center mb-4">Pilih Misteri Box dari aku yaa, gak boleh curang!</h2>
+    <div class="flex justify-center mb-4">
+      <img src="https://i.pinimg.com/originals/a8/ec/cf/a8eccf556f4ded85d1e633cd04f4344a.gif" alt="Animasi Perayaan" class="h-20">
+    </div>
+    <div class="grid grid-cols-2 gap-4 max-w-md mx-auto w-full">
+      <div class="gift-item bg-white rounded-2xl shadow-lg aspect-square flex items-center justify-center text-4xl cursor-pointer font-bold" data-box="1">❓</div>
+      <div class="gift-item bg-white rounded-2xl shadow-lg aspect-square flex items-center justify-center text-4xl cursor-pointer font-bold" data-box="2">❓</div>
+      <div class="gift-item bg-white rounded-2xl shadow-lg aspect-square flex items-center justify-center text-4xl cursor-pointer font-bold" data-box="3">❓</div>
+      <div class="gift-item bg-white rounded-2xl shadow-lg aspect-square flex items-center justify-center text-4xl cursor-pointer font-bold" data-box="4">❓</div>
+    </div>
+  </section>
+
+  <!-- COUNTDOWN -->
+  <div id="countdownOverlay" class="overlay hidden">
+    <div class="text-center text-white">
+      <div id="countNum" class="text-7xl font-extrabold mb-4">3</div>
+      <p class="text-xl mb-4">Tunggu bentar ya...</p>
+    </div>
+  </div>
+
+  <!-- MODAL HADIAH -->
+  <div id="giftModal" class="overlay hidden">
+    <div class="bg-white rounded-2xl p-6 max-w-md w-full animate__animated animate__zoomIn">
+      <h3 class="text-2xl font-bold text-purple-800 mb-2">Selamat! 🎉</h3>
+      <p id="prizeName" class="text-pink-600 font-semibold mb-4">Kamu mendapatkan hadiah spesial!</p>
+      <label for="message" class="block text-purple-800 mb-2">Tulis pesan ucapan:</label>
+      <textarea id="message" rows="3" class="w-full px-3 py-2 border border-purple-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 mb-4" placeholder="Tulis pesanmu di sini..."></textarea>
+      <button id="sendBtn" class="w-full bg-pink-600 hover:bg-pink-700 text-white font-bold py-3 rounded-lg">Kirim via WhatsApp</button>
+      <button id="closeModal" class="w-full mt-3 bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 rounded-lg">Tutup</button>
+    </div>
+  </div>
+
+  <script>
+    const WA_TARGET = "6281234567890"; 
+    const COUNTDOWN_SECONDS = 3;
+
+    const intro = document.getElementById('intro');
+    const introPlay = document.getElementById('introPlay');
+    const ytPlayer = document.getElementById('ytPlayer');
+    const page2 = document.getElementById('page2');
+    const page3 = document.getElementById('page3');
+    const flipCard = document.getElementById('flipCard');
+    const flipBtn = document.getElementById('flipBtn');
+    const giftBtn = document.getElementById('giftBtn');
+    const cardImage = document.getElementById('cardImage');
+    const cardText = document.getElementById('cardText');
+    const cardFrontText = document.getElementById('cardFrontText');
+    const giftItems = document.querySelectorAll('.gift-item');
+    const countdownOverlay = document.getElementById('countdownOverlay');
+    const countNum = document.getElementById('countNum');
+    const giftModal = document.getElementById('giftModal');
+    const message = document.getElementById('message');
+    const sendBtn = document.getElementById('sendBtn');
+    const closeModal = document.getElementById('closeModal');
+    const prizeNameEl = document.getElementById('prizeName');
+
+    const contents = [
+      { type: "text", value: "Happy Birthday kak, maap yaa cuman bisa kasih ini" },
+      { type: "img", value: "https://res.cloudinary.com/dk0z4ums3/image/upload/v1700021497/attached_image/ini-pentingnya-quality-time-bersama-orang-terdekat-2.jpg" },
+      { type: "text", value: "Semoga harimu penuh kebahagiaan!" },
+      { type: "img", value: "https://habbie.co.id/storage/img/articles/1707721588_excited-indonesian-family-supporter-with-indonesian-flag-beach-together.jpg" },
+      { type: "text", value: "Selalu sehat dan sukses ya!" },
+      { type: "img", value: "https://www.adventurebook.com/connect/wp-content/uploads/sites/2/2022/05/best-summer-family-vacations.jpg" },
+      { type: "text", value: "Kamu orang yang luar biasa 🎉" }
+    ];
+
+    let currentIndex = 1; // 0 udah dipakai di awal
+    let winnerBox = Math.floor(Math.random() * 4) + 1;
+    const PRIZE_LABEL = "🎁 Hadiah Spesial!";
+
+    function show(el){ el.classList.remove('hidden'); }
+    function hide(el){ el.classList.add('hidden'); }
+
+    function runCountdown(sec=COUNTDOWN_SECONDS){
+      return new Promise(resolve=>{
+        show(countdownOverlay);
+        let s=sec; countNum.textContent=s;
+        const t=setInterval(()=>{
+          s--; countNum.textContent=s;
+          if(s<=0){ clearInterval(t); hide(countdownOverlay); resolve(); }
+        },1000);
+      });
+    }
+
+    function openWA(text){ window.location.href = `https://wa.me/${WA_TARGET}?text=${encodeURIComponent(text)}`; }
+
+    // Musik
+    introPlay.addEventListener('click',()=>{
+      ytPlayer.src="https://www.youtube.com/embed/mAJa4SF_VVI?autoplay=1";
+      ytPlayer.classList.remove('hidden');
+      hide(intro);
+      show(page2);
+    });
+
+    // Flip
+    flipBtn.addEventListener('click', () => {
+      const item = contents[currentIndex];
+
+      if (flipCard.classList.contains('flipped')) {
+        // Update sisi depan
+        if (item.type === "img") {
+          cardFrontText.innerHTML = `<img src="${item.value}" class="w-full h-full object-cover rounded-lg">`;
+        } else {
+          cardFrontText.textContent = item.value;
+        }
+      } else {
+        // Update sisi belakang
+        if (item.type === "img") {
+          cardImage.src = item.value;
+          cardImage.classList.remove("hidden");
+          cardText.classList.add("hidden");
+        } else {
+          cardText.textContent = item.value;
+          cardText.classList.remove("hidden");
+          cardImage.classList.add("hidden");
+        }
+      }
+
+      flipCard.classList.toggle('flipped');
+      currentIndex++;
+
+      if (currentIndex >= contents.length) {
+        flipBtn.classList.add('hidden');
+        giftBtn.classList.remove('hidden');
+      }
+    });
+
+    giftBtn.addEventListener('click',()=>{ hide(page2); show(page3); });
+
+    giftItems.forEach(item=>{
+      item.addEventListener('click',async ()=>{
+        const num=parseInt(item.dataset.box);
+        await runCountdown();
+        if(num===winnerBox){
+          item.textContent="🎉"; item.classList.add("text-green-600");
+          prizeNameEl.textContent=PRIZE_LABEL; message.value=""; show(giftModal);
+        } else {
+          item.textContent="❌"; item.classList.add("text-red-600");
+          openWA("Waduh, aku dapat ZONK di Mystery Box 😅");
+        }
+      });
+    });
+
+    closeModal.addEventListener('click',()=>hide(giftModal));
+    sendBtn.addEventListener('click',()=>{
+      if(message.value.trim()===""){ alert("Pesan wajib diisi!"); return; }
+      openWA(`Yay! Aku dapat ${PRIZE_LABEL} 🎁\nPesan: ${message.value}`);
+    });
+  </script>
+</body>
+</html>
