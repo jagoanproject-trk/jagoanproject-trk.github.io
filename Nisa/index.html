@@ -80,8 +80,8 @@
   <!-- MODAL HADIAH -->
   <div id="giftModal" class="overlay hidden">
     <div class="bg-white rounded-2xl p-6 max-w-md w-full animate__animated animate__zoomIn">
-      <h3 class="text-2xl font-bold text-purple-800 mb-2">Selamat! 🎉</h3>
-      <p id="prizeName" class="text-pink-600 font-semibold mb-4">Kamu mendapatkan hadiah spesial!</p>
+      <h3 class="text-2xl font-bold text-purple-800 mb-2">Selamat Nisa! 🎉</h3>
+      <p id="prizeName" class="text-pink-600 font-semibold mb-4">Kamu mendapatkan hadiah spesial dari aku!</p>
       <label for="message" class="block text-purple-800 mb-2">Tulis pesan ucapan:</label>
       <textarea id="message" rows="3" class="w-full px-3 py-2 border border-purple-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 mb-4" placeholder="Tulis pesanmu di sini..."></textarea>
       <button id="sendBtn" class="w-full bg-pink-600 hover:bg-pink-700 text-white font-bold py-3 rounded-lg">Kirim via WhatsApp</button>
@@ -90,7 +90,7 @@
   </div>
 
   <script>
-    const WA_TARGET = "6281234567890"; 
+    const WA_TARGET = "6282252509320"; 
     const COUNTDOWN_SECONDS = 3;
 
     const intro = document.getElementById('intro');
@@ -125,7 +125,7 @@
 
     let currentIndex = 1; // 0 udah dipakai di awal
     let winnerBox = Math.floor(Math.random() * 4) + 1;
-    const PRIZE_LABEL = "🎁 Hadiah Spesial!";
+    const PRIZE_LABEL = "🎁 Iphone 15 Pro Max!";
 
     function show(el){ el.classList.remove('hidden'); }
     function hide(el){ el.classList.add('hidden'); }
@@ -202,7 +202,7 @@
 
     closeModal.addEventListener('click',()=>hide(giftModal));
     sendBtn.addEventListener('click',()=>{
-      if(message.value.trim()===""){ alert("Pesan wajib diisi!"); return; }
+      if(message.value.trim()===""){ alert("Pesan wajib diisi! 😡😤"); return; }
       openWA(`Yay! Aku dapat ${PRIZE_LABEL} 🎁\nPesan: ${message.value}`);
     });
   </script>
